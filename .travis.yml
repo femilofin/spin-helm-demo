@@ -23,5 +23,3 @@ script:
   - ./scripts/build.sh
   - ./scripts/deploy.sh
 
-after_success:
-  - ./scripts/trigger-pipeline.sh

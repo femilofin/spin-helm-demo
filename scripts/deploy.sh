@@ -30,4 +30,6 @@ upload_chart() {
 
 setup_git
 upload_chart
+
+# trigger spinnaker pipeline
 ./scripts/trigger-pipeline.sh
