@@ -1,0 +1,27 @@
+sudo: required
+language: python
+python:
+  - '3.6'
+
+services:
+  - docker
+
+env:
+  global:
+    - HELM_URL=https://storage.googleapis.com/kubernetes-helm
+    - HELM_TGZ=helm-v2.4.1-linux-amd64.tar.gz
+    - CHART_REPO=github.com/femilofin/helm-charts.git
+
+install:
+    # install helm
+  - wget -q ${HELM_URL}/${HELM_TGZ}
+  - tar xzfv ${HELM_TGZ}
+  - PATH=`pwd`/linux-amd64/:$PATH
+  - helm init --client-only
+
+script:
+  - ./scripts/build.sh
+  - ./scripts/deploy.sh
+
+after_success:
+  - ./scripts/trigger-pipeline.sh

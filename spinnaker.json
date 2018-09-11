@@ -1,0 +1,221 @@
+{
+  "expectedArtifacts": [
+    {
+      "defaultArtifact": {
+        "kind": "default.github",
+        "name": "$FILEPATH",
+        "reference": "https://api.github.com/repos/femilofin/spin-helm-demo/spin-helm-demo-0.2.0.tgz",
+        "type": "github/file",
+        "version": "master"
+      },
+      "id": "80ca38d0-f800-47f0-a865-5c4b807934f6",
+      "matchArtifact": {
+        "kind": "github",
+        "name": "spin-helm-demo-0.2.0.tgz",
+        "type": "github/file"
+      },
+      "useDefaultArtifact": true,
+      "usePriorArtifact": true,
+      "usePriorExecution": false
+    },
+    {
+      "defaultArtifact": {
+        "kind": "default.docker",
+        "name": "oluwafemi/spin-helm-demo",
+        "reference": "oluwafemi/spin-helm-demo:latest",
+        "type": "docker/image",
+        "version": "latest"
+      },
+      "id": "da0ab6fb-0606-4541-b6f8-2e7637cdeaf0",
+      "matchArtifact": {
+        "kind": "docker",
+        "name": "spin-helm-demo",
+        "type": "docker/image"
+      },
+      "useDefaultArtifact": true,
+      "usePriorArtifact": true,
+      "usePriorExecution": false
+    },
+    {
+      "defaultArtifact": {
+        "kind": "default.github",
+        "reference": "https://api.github.com/repos/femilofin/spin-helm-demo/values/dev.yaml",
+        "type": "github/file",
+        "version": "master"
+      },
+      "id": "4abe3fd1-bd05-42dd-9a51-6644884af9c5",
+      "matchArtifact": {
+        "kind": "github",
+        "name": "values/dev.yaml",
+        "type": "github/file"
+      },
+      "useDefaultArtifact": true,
+      "usePriorArtifact": true,
+      "usePriorExecution": false
+    },
+    {
+      "defaultArtifact": {
+        "kind": "default.github",
+        "reference": "https://api.github.com/repos/femilofin/spin-helm-demo/values/prod.yaml",
+        "type": "github/file",
+        "version": "master"
+      },
+      "id": "d1b54360-2ec4-4a8b-9696-898fd34fc0b3",
+      "matchArtifact": {
+        "kind": "github",
+        "name": "values/prod.yaml",
+        "type": "github/file"
+      },
+      "useDefaultArtifact": true,
+      "usePriorArtifact": true,
+      "usePriorExecution": false
+    }
+  ],
+  "keepWaitingPipelines": false,
+  "lastModifiedBy": "femilofin",
+  "limitConcurrent": true,
+  "parameterConfig": [],
+  "stages": [
+    {
+      "expectedArtifacts": [
+        {
+          "defaultArtifact": {},
+          "id": "b7c64993-a1b5-46d3-b616-4d37f35a661e",
+          "matchArtifact": {
+            "kind": "base64",
+            "name": "spinhelmdemo-dev",
+            "type": "embedded/base64"
+          },
+          "useDefaultArtifact": false
+        }
+      ],
+      "inputArtifacts": [
+        {
+          "account": "github-public",
+          "id": "80ca38d0-f800-47f0-a865-5c4b807934f6"
+        },
+        {
+          "account": "github-public",
+          "id": "4abe3fd1-bd05-42dd-9a51-6644884af9c5"
+        }
+      ],
+      "name": "Bake Dev Manifest",
+      "namespace": "evaluate",
+      "outputName": "spinhelmdemo-dev",
+      "overrides": {},
+      "refId": "1",
+      "requisiteStageRefIds": [],
+      "templateRenderer": "HELM2",
+      "type": "bakeManifest"
+    },
+    {
+      "expectedArtifacts": [
+        {
+          "defaultArtifact": {},
+          "id": "b7c64993-a1b5-46d3-b616-4d37f35a661e",
+          "matchArtifact": {
+            "kind": "base64",
+            "name": "spinhelmdemo-prod",
+            "type": "embedded/base64"
+          },
+          "useDefaultArtifact": false
+        }
+      ],
+      "inputArtifacts": [
+        {
+          "account": "github-public",
+          "id": "80ca38d0-f800-47f0-a865-5c4b807934f6"
+        },
+        {
+          "account": "github-public",
+          "id": "d1b54360-2ec4-4a8b-9696-898fd34fc0b3"
+        }
+      ],
+      "name": "Bake Prod Manifest",
+      "namespace": "evaluate",
+      "outputName": "spinhelmdemo-prod",
+      "overrides": {},
+      "refId": "2",
+      "requisiteStageRefIds": [],
+      "templateRenderer": "HELM2",
+      "type": "bakeManifest"
+    },
+    {
+      "account": "kubernetes",
+      "cloudProvider": "kubernetes",
+      "manifestArtifactAccount": "embedded-artifact",
+      "manifestArtifactId": "b7c64993-a1b5-46d3-b616-4d37f35a661e",
+      "moniker": {
+        "app": "evaluate"
+      },
+      "name": "Deploy Dev Manifest",
+      "refId": "3",
+      "relationships": {
+        "loadBalancers": [],
+        "securityGroups": []
+      },
+      "requiredArtifactIds": [
+        "da0ab6fb-0606-4541-b6f8-2e7637cdeaf0"
+      ],
+      "requisiteStageRefIds": [
+        "1",
+        "2"
+      ],
+      "source": "artifact",
+      "type": "deployManifest"
+    },
+    {
+      "failPipeline": true,
+      "instructions": "check $url to ensure dev works well before deploy to prod",
+      "judgmentInputs": [],
+      "name": "Manual Judgment",
+      "notifications": [],
+      "refId": "4",
+      "requisiteStageRefIds": [
+        "3"
+      ],
+      "type": "manualJudgment"
+    },
+    {
+      "account": "kubernetes",
+      "cloudProvider": "kubernetes",
+      "manifest": null,
+      "manifestArtifactAccount": "embedded-artifact",
+      "manifestArtifactId": "b7c64993-a1b5-46d3-b616-4d37f35a661e",
+      "manifests": null,
+      "moniker": {
+        "app": "evaluate"
+      },
+      "name": "Deploy Prod Manifest",
+      "refId": "5",
+      "relationships": {
+        "loadBalancers": [],
+        "securityGroups": []
+      },
+      "requiredArtifactIds": [
+        "da0ab6fb-0606-4541-b6f8-2e7637cdeaf0"
+      ],
+      "requisiteStageRefIds": [
+        "4"
+      ],
+      "source": "artifact",
+      "type": "deployManifest",
+      "versioned": null
+    }
+  ],
+  "triggers": [
+    {
+      "enabled": true,
+      "expectedArtifactIds": [
+        "80ca38d0-f800-47f0-a865-5c4b807934f6",
+        "da0ab6fb-0606-4541-b6f8-2e7637cdeaf0",
+        "4abe3fd1-bd05-42dd-9a51-6644884af9c5",
+        "d1b54360-2ec4-4a8b-9696-898fd34fc0b3"
+      ],
+      "payloadConstraints": {},
+      "source": "spin-helm-demo",
+      "type": "webhook"
+    }
+  ],
+  "updateTs": "1536688772389"
+}
