@@ -1,4 +1,9 @@
 #!/bin/bash
+set -ex
+
+if [ $TRAVIS_PULL_REQUEST == "true" ]; then
+  exit 0
+fi
 
 SPINNAKER_API=https://spinnaker.demo.armory.io/api/webhooks/webhook/spin-helm-demo
 CHART_VERSION=`cat chart/spin-helm-demo/Chart.yaml | grep version | awk '{print $2}'`
