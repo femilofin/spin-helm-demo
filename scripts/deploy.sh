@@ -37,4 +37,5 @@ upload_chart
 
 # trigger spinnaker pipeline
 cd ..
-./scripts/trigger-pipeline.sh
+make trigger
+# ./scripts/trigger-pipeline.sh
