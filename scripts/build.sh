@@ -2,6 +2,10 @@
 
 set -ex
 
+if [ $TRAVIS_PULL_REQUEST == "true" ]; then
+  exit 0
+fi
+
 APP_VERSION=`cat chart/spin-helm-demo/Chart.yaml | grep appVersion | awk '{print $2}'`
 DOCKER_REPO=oluwafemi/spin-helm-demo
 

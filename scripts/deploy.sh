@@ -2,6 +2,10 @@
 
 set -ex
 
+if [ $TRAVIS_PULL_REQUEST == "true" ]; then
+  exit 0
+fi
+
 # package chart
 helm package chart/spin-helm-demo
 
@@ -30,4 +34,6 @@ upload_chart() {
 
 setup_git
 upload_chart
-./scripts/trigger-pipeline.sh
+
+# trigger spinnaker pipeline
+../scripts/trigger-pipeline.sh
